@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sspaceex xmlns="http://www-verimag.imag.fr/xml-namespaces/sspaceex" version="0.2" math="SpaceEx">
+	<component id="car_template">
+		<param name="x" type="real" local="true" d1="1" d2="1" dynamics="any"/>
+		<param name="y" type="real" local="true" d1="1" d2="1" dynamics="any"/>
+		<param name="z" type="real" local="true" d1="1" d2="1" dynamics="any"/>
+		<param name="v" type="real" local="true" d1="1" d2="1" dynamics="any"/>
+		<param name="time" type="real" local="true" d1="1" d2="1" dynamics="any"/>
+		<param name="angle" type="real" local="true" d1="1" d2="1" dynamics="any"/>
+		<param name="acc" type="real" local="true" d1="1" d2="1" dynamics="any"/>
+		<param name="fuel" type="real" local="true" d1="1" d2="1" dynamics="any"/>
+		<param name="u1" type="real" local="true" d1="1" d2="1" dynamics="any"/>
+		<param name="u2" type="real" local="true" d1="1" d2="1" dynamics="any"/>
+		<param name="f2com" type="label" local="false" />
+		<param name="t2com" type="label" local="false" />
+		<param name="com2f" type="label" local="false" />
+		<param name="com2t" type="label" local="false" />
+		<param name="toforw" type="label" local="false" />
+		<param name="toturn" type="label" local="false" />
+		<location id="1" name="forward">
+			<flow>x'=v*cos(angle) &amp;&amp; time'=1 &amp;&amp; angle'=0 &amp;&amp; y'=v*sin(angle)&amp;&amp; v'=u2 &amp;&amp; fuel'=2*v</flow>
+			<invariant> v&lt;=8 </invariant>
+		</location>
+		<location id="2" name="turn">
+			<flow>x'=v*cos(angle) &amp;&amp; time'=1 &amp;&amp; angle'=u1 &amp;&amp; y'=v*sin(angle) &amp;&amp; v'=0 &amp;&amp; fuel'=v</flow>
+			<invariant> angle&gt;=-1.5 &amp;angle&lt;3.14</invariant>
+		</location>
+		<location id="3" name="communicate">
+			<invariant>z&lt;=10</invariant>
+			<flow>z' == 1 </flow>
+		</location>
+		<transition source="1" target="2">
+			<label>toturn</label>
+		</transition>
+		<transition source="2" target="1">
+			<label>toforw</label>
+		</transition>
+		<transition source="1" target="3">
+			<label>f2com</label>
+			<assignment>z:=0</assignment>
+		</transition>
+		<transition source="2" target="3">
+			<label>t2com</label>
+			<assignment>z:=0</assignment>
+		</transition>
+		<transition source="3" target="1">
+			<label>com2f</label>
+		</transition>
+		<transition source="3" target="2">
+			<label>com2t</label>
+		</transition>
+	</component>
+	<component id="system">
+		<param name="toturn1" type="label" local="false" />
+		<param name="toforw1" type="label" local="false" />
+		<param name="toturn2" type="label" local="false" />
+		<param name="toforw2" type="label" local="false" />
+		<param name="f2com" type="label" local="false" />
+		<param name="t2com" type="label" local="false" />
+		<param name="com2t" type="label" local="false" />
+		<param name="com2f" type="label" local="false" />
+		<bind component="car_template" as="car1">
+			<map key="toturn">toturn1</map>
+			<map key="toforw">toforw1</map>
+			<map key="f2com">f2com</map>
+			<map key="t2com">t2com</map>
+			<map key="com2t">com2t</map>
+			<map key="com2f">com2f</map>
+		</bind>
+		<bind component="car_template" as="car2">
+			<map key="toturn">toturn2</map>
+			<map key="toforw">toforw2</map>
+			<map key="f2com">f2com</map>
+			<map key="t2com">t2com</map>
+			<map key="com2t">com2t</map>
+			<map key="com2f">com2f</map>
+		</bind>
+	</component>
+</sspaceex>

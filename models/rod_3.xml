@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sspaceex xmlns="http://www-verimag.imag.fr/xml-namespaces/sspaceex" version="0.2" math="SpaceEx">
+	<component id="rod_template">
+		<param name="x" type="real" local="true" d1="1" d2="1" dynamics="any" />
+		<param name="y" type="real" local="true" d1="1" d2="1" dynamics="any" />
+		<param name="add" type="label" local="false" />
+		<param name="remove" type="label" local="false" />
+		<param name="recovery" type="label" local="false" />
+		<location id="1" name="out">
+			<flow>x'== 1 </flow>
+		</location>
+		<location id="2" name="in">
+			<invariant>y&lt;=10000</invariant>
+			<flow>x' == 1 &amp;&amp; y' == 1</flow>
+		</location>
+		<location id="3" name="recover">
+			<flow>x' == 1 </flow>
+		</location>
+		<transition source="1" target="2">
+			<label>add</label>
+			<assignment>x:=0</assignment>
+		</transition>
+		<transition source="2" target="3">
+			<label>remove</label>
+		</transition>
+		<transition source="3" target="1">
+			<label>recovery</label>
+		</transition>
+	</component>
+	<component id="controller_template">
+		<param name="x" type="real" local="true" d1="1" d2="1" dynamics="any" />
+		<param name="t1" type="real" local="true" d1="1" d2="1" dynamics="any" />
+		<param name="t2" type="real" local="true" d1="1" d2="1" dynamics="any" />
+		<param name="add1" type="label" local="false" />
+		<param name="remove1" type="label" local="false" />
+		<param name="add2" type="label" local="false" />
+		<param name="remove2" type="label" local="false" />
+		<param name="add3" type="label" local="false" />
+		<param name="remove3" type="label" local="false" />
+		<location id="1" name="loc0">
+			<invariant>x&lt;=t1</invariant>
+			<flow>x' == 1</flow>
+		</location>
+		<location id="2" name="loc1">
+			<invariant>x&lt;=t2</invariant>
+			<flow>x' == 1</flow>
+		</location>
+		<location id="3" name="loc2">
+			<invariant>x&lt;=t2</invariant>
+			<flow>x' == 1</flow>
+		</location>
+		<location id="4" name="loc3">
+			<invariant>x&lt;=t2</invariant>
+			<flow>x' == 1</flow>
+		</location>
+
+		<transition source="1" target="2">
+			<label>add1</label>
+			<assignment>x:=0</assignment>
+		</transition>
+		<transition source="1" target="3">
+			<label>add2</label>
+			<assignment>x:=0</assignment>
+		</transition>
+		<transition source="2" target="1">
+			<label>remove1</label>
+			<assignment>x:=0</assignment>
+		</transition>
+		<transition source="3" target="1">
+			<label>remove2</label>
+			<assignment>x:=0</assignment>
+		</transition>
+
+		<transition source="1" target="4">
+			<label>add3</label>
+			<assignment>x:=0</assignment>
+		</transition>
+		<transition source="4" target="1">
+			<label>remove3</label>
+			<assignment>x:=0</assignment>
+		</transition>
+	</component>
+	<component id="system">
+		<param name="add1" type="label" local="false" />
+		<param name="remove1" type="label" local="false" />
+		<param name="recovery1" type="label" local="false" />
+		<param name="add2" type="label" local="false" />
+		<param name="remove2" type="label" local="false" />
+		<param name="recovery2" type="label" local="false" />
+		<param name="add3" type="label" local="false" />
+		<param name="remove3" type="label" local="false" />
+		<param name="recovery3" type="label" local="false" />
+		<bind component="rod_template" as="rod1">
+			<map key="add">add1</map>
+			<map key="remove">remove1</map>
+			<map key="recovery">recovery1</map>
+		</bind>
+		<bind component="rod_template" as="rod2">
+			<map key="add">add2</map>
+			<map key="remove">remove2</map>
+			<map key="recovery">recovery2</map>
+		</bind>
+		<bind component="rod_template" as="rod3">
+			<map key="add">add3</map>
+			<map key="remove">remove3</map>
+			<map key="recovery">recovery3</map>
+		</bind>
+		<bind component="controller_template" as="controller">
+			<map key="add1">add1</map>
+			<map key="remove1">remove1</map>
+			<map key="add2">add2</map>
+			<map key="remove2">remove2</map>
+			<map key="add3">add3</map>
+			<map key="remove3">remove3</map>
+		</bind>
+	</component>
+</sspaceex>

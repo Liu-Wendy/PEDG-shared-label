@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<sspaceex xmlns="http://www-verimag.imag.fr/xml-namespaces/sspaceex" version="0.2" math="SpaceEx">
+    <component id="test1">
+        <param name="x" type="real" local="false" d1="1" d2="1" dynamics="any" />
+        <param name="y" type="real" local="false" d1="1" d2="1" dynamics="any" />
+        <param name="b" type="label" local="false" />
+        <param name="a" type="label" local="false" />
+        <location id="1" name="one" x="257.0" y="127.0">
+            <flow>x' == 1</flow>
+        </location>
+        <location id="2" name="two" x="257.0" y="127.0">
+            <flow>x' == -1</flow>
+        </location>
+        <location id="3" name="three" x="257.0" y="127.0">
+            <flow>y' == -1</flow>
+        </location>
+        <transition source="1" target="2">
+            <label>b</label>
+            <guard>x &gt;= 10</guard>
+            <labelposition x="-21.0" y="-49.0" />
+        </transition>
+        <transition source="2" target="3">
+            <label>a</label>
+            <guard>x &lt;= 5</guard>
+            <labelposition x="-21.0" y="-49.0" />
+        </transition>
+    </component>
+    <component id="test2">
+        <param name="z" type="real" local="false" d1="1" d2="1" dynamics="any" />
+        <param name="a" type="label" local="false" />
+        <location id="1" name="one" x="257.0" y="127.0">
+            <flow>z' == 1</flow>
+        </location>
+        <location id="2" name="two" x="257.0" y="127.0">
+            <flow>z' == -1</flow>
+        </location>
+        <transition source="1" target="2">
+            <label>a</label>
+            <labelposition x="-21.0" y="-49.0" />
+        </transition>
+    </component>
+    <component id="sys">
+        <param name="x" type="real" local="false" d1="1" d2="1" dynamics="any" />
+        <param name="y" type="real" local="false" d1="1" d2="1" dynamics="any" />
+        <param name="z" type="real" local="false" d1="1" d2="1" dynamics="any" />
+        <param name="b" type="label" local="false" />
+        <param name="a" type="label" local="false" />
+        <bind component="test1" as="test1" x="471.0" y="586.0">
+            <map key="b">b</map>
+            <map key="a">a</map>
+        </bind>
+        <bind component="test2" as="test2" x="471.0" y="586.0">
+            <map key="a">a</map>
+        </bind>
+    </component>
+
+
+
+</sspaceex>
+

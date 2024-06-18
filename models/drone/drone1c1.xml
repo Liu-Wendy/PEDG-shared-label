@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sspaceex xmlns="http://www-verimag.imag.fr/xml-namespaces/sspaceex" version="0.2" math="SpaceEx">
+    <component id="drone_template">
+        <param name="px" type="real" local="false" d1="1" d2="1" dynamics="any"/>
+        <param name="py" type="real" local="false" d1="1" d2="1" dynamics="any"/>
+        <param name="vx" type="real" local="false" d1="1" d2="1" dynamics="any"/>
+        <param name="vy" type="real" local="false" d1="1" d2="1" dynamics="any"/>
+        <param name="time" type="real" local="false" d1="1" d2="1" dynamics="any"/>
+        <param name="T11" type="real" local="false" d1="1" d2="1" dynamics="any"/>
+        <param name="T12" type="real" local="false" d1="1" d2="1" dynamics="any"/>
+        <param name="T13" type="real" local="false" d1="1" d2="1" dynamics="any"/>
+        <param name="T21" type="real" local="false" d1="1" d2="1" dynamics="any"/>
+        <param name="T22" type="real" local="false" d1="1" d2="1" dynamics="any"/>
+        <param name="T23" type="real" local="false" d1="1" d2="1" dynamics="any"/>
+        <param name="T31" type="real" local="false" d1="1" d2="1" dynamics="any"/>
+        <param name="T32" type="real" local="false" d1="1" d2="1" dynamics="any"/>
+        <param name="T33" type="real" local="false" d1="1" d2="1" dynamics="any"/>
+        <param name="anglex" type="real" local="false" d1="1" d2="1" dynamics="any"/>
+        <param name="anglev" type="real" local="false" d1="1" d2="1" dynamics="any"/>
+        <param name="MG" type="real" local="false" d1="1" d2="1" dynamics="any"/>
+        <param name="ga" type="real" local="false" d1="1" d2="1" dynamics="any"/>
+        <param name="L" type="real" local="false" d1="1" d2="1" dynamics="any"/>
+        <param name="I" type="real" local="false" d1="1" d2="1" dynamics="any"/>
+        <param name="u" type="real" local="false" d1="1" d2="1" dynamics="any"/>
+        <param name="fuel" type="real" local="false" d1="1" d2="1" dynamics="any"/>
+
+
+
+        <param name="i2a" type="label" local="false" />
+        <param name="i2c" type="label" local="false" />
+        <param name="i2b" type="label" local="false" />
+        <param name="a2c" type="label" local="false" />
+        <param name="a2f" type="label" local="false" />
+        <param name="c2a" type="label" local="false" />
+        <param name="c2f" type="label" local="false" />
+        <param name="f2a" type="label" local="false" />
+        <param name="f2c" type="label" local="false" />
+
+        <location id="1" name="acc">
+            <flow>px'==vx &amp;&amp;py'=vy &amp;&amp; vx'=1 / MG * sin(anglex) * (T11+T12+T13) &amp;&amp; vy'= 1 / MG * cos(anglex) * (T11+T12+T13) - ga &amp;&amp;time'==1 &amp;&amp; anglex'== anglev &amp;&amp; anglev'==L/I*(T11-T13) &amp;&amp; fuel'==2*phi(vx)*phi(vy)*(T11+T12+T13)+200</flow>
+            <invariant>vy&lt;=2&amp;vy&gt;=-2</invariant>
+        </location>
+        <location id="2" name="cruise">
+            <flow>px'==vx &amp;&amp;py'=vy &amp;&amp; vx'=1 / MG * sin(anglex) * (T21+T22+T23) &amp;&amp; vy'= 1 / MG * cos(anglex) * (T21+T22+T23) - ga &amp;&amp;time'==1 &amp;&amp; anglex'== anglev &amp;&amp; anglev' == L/I*(T21-T23) &amp;&amp; fuel'==phi(vx)*phi(vy)*(T21+T22+T23)+50</flow>
+            <invariant>vy&lt;=2&amp;vy&gt;=-2</invariant>
+        </location>
+        <location id="3" name="fly">
+            <flow>px'==vx &amp;&amp;py'=vy &amp;&amp; vx'=1 / MG * sin(anglex) * (T31+T32+T33) &amp;&amp; vy'= 1 / MG * cos(anglex) * (T31+T32+T33) - ga &amp;&amp;time'==1 &amp;&amp; anglex'== anglev &amp;&amp; anglev' == L/I*(T31-T33)&amp;&amp; fuel'==phi(vx)*phi(vy)*(T31+T32+T33)</flow>
+            <invariant>vy&lt;=2&amp;vy&gt;=-2</invariant>
+        </location>
+        <location id="4" name="init">
+
+        </location>
+
+
+
+
+        <transition source="1" target="2">
+            <label>a2c</label>
+        </transition>
+        <transition source="2" target="1">
+            <label>c2a</label>
+        </transition>
+        <transition source="1" target="3">
+            <label>a2f</label>
+        </transition>
+        <transition source="2" target="3">
+            <label>c2f</label>
+        </transition>
+        <transition source="3" target="1">
+            <label>f2a</label>
+        </transition>
+        <transition source="3" target="2">
+            <label>f2c</label>
+        </transition>
+        <transition source="4" target="1">
+            <label>i2a</label>
+        </transition>
+        <transition source="4" target="2">
+            <label>i2c</label>
+        </transition>
+        <transition source="4" target="3">
+            <label>i2f</label>
+        </transition>
+
+
+
+    </component>
+    <component id="controller_template">
+        <param name="k" type="real" local="false" d1="1" d2="1" dynamics="any"/>
+
+        <param name="a2z" type="label" local="false" />
+        <param name="a2c" type="label" local="false" />
+
+        <location id="1" name="zero">
+
+        </location>
+        <location id="2" name="add">
+            <flow>k'=1</flow>
+        </location>
+
+        <transition source="1" target="2">
+            <label>a2c</label>
+        </transition>
+        <transition source="2" target="1">
+            <label>a2z</label>
+        </transition>
+
+
+    </component>
+
+    <component id="system">
+        <param name="i2a" type="label" local="false" />
+        <param name="i2c" type="label" local="false" />
+        <param name="i2b" type="label" local="false" />
+        <param name="a2c" type="label" local="false" />
+        <param name="a2f" type="label" local="false" />
+        <param name="c2a" type="label" local="false" />
+        <param name="c2f" type="label" local="false" />
+        <param name="f2a" type="label" local="false" />
+        <param name="f2c" type="label" local="false" />
+        <param name="a2z" type="label" local="false" />
+
+        <bind component="drone_template" as="drone">
+            <map key="i2a">i2a</map>
+            <map key="i2c">i2c</map>
+            <map key="i2b">i2b</map>
+            <map key="a2c">a2c</map>
+            <map key="a2f">a2f</map>
+            <map key="c2a">c2a</map>
+        </bind>
+        <bind component="controller_template" as="controller">
+            <map key="a2z">a2z</map>
+            <map key="a2c">a2c</map>
+        </bind>
+    </component>
+</sspaceex>
